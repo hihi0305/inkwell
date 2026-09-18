@@ -41,7 +41,8 @@ export const AuthService = {
     }
 
     const tokens = TokenService.issueTokens(user);
-    return { user, ...tokens };
+	const { passwordHash: _, ...safeUser } = user; // Prevent the password hash from being exposed to the frontend.
+    return { user: safeUser, ...tokens };
   },
 
   async login({ email, password }) {
@@ -56,7 +57,8 @@ export const AuthService = {
     }
 
     const tokens = TokenService.issueTokens(user);
-    return { user, ...tokens };
+	const { passwordHash: _, ...safeUser } = user; // Prevent the password hash from being exposed to the frontend.
+    return { user: safeUser, ...tokens };
   },
 };
 
