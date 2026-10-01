@@ -11,11 +11,11 @@ Definition of Done: see README.md
 | US-05 | As a reader, I want to comment on a post, so that I can engage with the author | Medium | 3 | Backlog | |
 | US-06 | As a reader, I want to follow an author, so that I see their new posts more prominently | Medium | 3 | Backlog | |
 | US-07 | As an author, I want to see basic analytics on my posts, so that I understand my audience | Low | 5 | Backlog | |
-| US-08 | As a visitor, I want to search posts by keyword, so that I can quickly find content that interests me | Medium | 3 | Backlog | |
-| US-09 | As a reader, I want to see the estimated reading time for a post, so that I can decide whether I have time to read it | Low | 2 | Backlog | |
+| US-08 | As an author, I want to tag my post with one or more topics, so that readers can discover it by subject. | Medium | 3 | Backlog | |
+| US-09 | As a reader, I want to search posts by keyword or tag, so that I can find content relevant to me. | Medium | 3 | Backlog | |
 
 
 ## Story Point Justification
 
-- US-08 (3 points): Keyword search requires filtering stored posts based on user input, giving it moderate implementation complexity.
-- US-09 (2 points): Estimated reading time can be calculated from the post's word count, so it requires relatively little additional functionality.
+- US-08 (3 points): Tagging requires associating posts with one or more reusable topics through a many-to-many relationship, giving it moderate implementation complexity.
+- US-09 (3 points): Searching by keyword or tag requires filtering published posts based on user input and integrating the search behavior with the existing posts endpoint.
