@@ -1,9 +1,8 @@
-
- // server/src/services/__tests__/post.service.test.js
+// server/src/services/__tests__/post.service.test.js
 
 import { jest } from "@jest/globals";
 
-const mockPostRepository = { createWithTags: jest.fn() };
+const mockPostRepository = {createWithTags: jest.fn(), searchPublished: jest.fn()};
 const mockEventBus = { emit: jest.fn() };
 
 jest.unstable_mockModule("../../repositories/post.repository.js", () => ({
@@ -44,4 +43,83 @@ test("publish() rejects an empty title", async () => {
       body: "World",
     })
   ).rejects.toThrow();
+});
+
+
+describe("PostService.search", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test("returns search results for a valid query (row 1)", async () => {
+    const expected = {
+      posts: [{ id: "p1", title: "JavaScript Basics" }],
+      hasMore: false,
+    };
+
+    mockPostRepository.searchPublished.mockResolvedValue(expected);
+
+    const result = await PostService.search({
+      query: "JavaScript",
+    });
+
+    expect(result).toEqual(expected);
+  });
+
+  test("uses default pagination values (row 2)", async () => {
+    mockPostRepository.searchPublished.mockResolvedValue({
+      posts: [],
+      hasMore: false,
+    });
+
+    await PostService.search({
+      query: "testing",
+    });
+
+    expect(mockPostRepository.searchPublished).toHaveBeenCalledWith({
+      query: "testing",
+      page: 1,
+      pageSize: 10,
+    });
+  });
+
+  test("accepts custom pagination values (row 3)", async () => {
+    mockPostRepository.searchPublished.mockResolvedValue({
+      posts: [],
+      hasMore: false,
+    });
+
+    await PostService.search({
+      query: "testing",
+      page: 2,
+      pageSize: 5,
+    });
+
+    expect(mockPostRepository.searchPublished).toHaveBeenCalledWith({
+      query: "testing",
+      page: 2,
+      pageSize: 5,
+    });
+  });
+
+  test("returns the repository result through the search strategy (row 4)", async () => {
+    const expected = {
+      posts: [{ id: "p2", title: "Software Design" }],
+      hasMore: true,
+    };
+
+    mockPostRepository.searchPublished.mockResolvedValue(expected);
+
+    const result = await PostService.search({
+      query: "design",
+    });
+
+    expect(mockPostRepository.searchPublished).toHaveBeenCalledWith({
+      query: "design",
+      page: 1,
+      pageSize: 10,
+    });
+
+    expect(result).toBe(expected);
+  });
 });
