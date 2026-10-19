@@ -63,3 +63,36 @@ test(
     expect(secondAttempt.body.error.code).toBe("EMAIL_ALREADY_REGISTERED");
   }
 );
+
+test(
+  "full flow: register and login (US-01, US-02 validation)",
+  async () => {
+    // Arrange: prepare new user credentials
+    const userData = {
+      email: "login-test@example.com",
+      displayName: "Login Test User",
+      password: "correcthorse"
+    };
+
+    // Act: register a new user
+    const registerRes = await request(app)
+      .post("/api/auth/register")
+      .send(userData);
+
+    // Assert: registration succeeds
+    expect(registerRes.status).toBe(201);
+
+    // Act: log in with the registered credentials
+    const loginRes = await request(app)
+      .post("/api/auth/login")
+      .send({
+        email: userData.email,
+        password: userData.password
+      });
+
+    // Assert: login succeeds
+    expect(loginRes.status).toBe(200);
+    expect(loginRes.body.accessToken)
+      .toEqual(expect.any(String));
+  }
+);
