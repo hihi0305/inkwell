@@ -6,6 +6,7 @@ import { assertNonEmpty } from "../utils/validation.js";
 import { SubstringSearchStrategy } from "./search/substring-search.strategy.js";
 
 const searchStrategy = SubstringSearchStrategy; // swap this line to change search behavior system-wide
+const MAX_PAGE_SIZE = 100;
 
 export const PostService = {
   async publish({ authorId, title, body, tagNames = [] }) {
@@ -29,14 +30,17 @@ export const PostService = {
   },
 
   async listPublished({ page = 1, pageSize = 10 }) {
+	const safePageSize = Math.min(pageSize, MAX_PAGE_SIZE);
+	
     const { posts, hasMore } = await PostRepository.findPublished({
 		page,
-		pageSize,
+		pageSize: safePageSize,
 	});
     return { posts, page, hasMore };
   },
   
   async search({ query, page = 1, pageSize = 10 }) {
-    return searchStrategy.search(query, { page, pageSize });
+	const safePageSize = Math.min(pageSize, MAX_PAGE_SIZE);
+    return searchStrategy.search(query, { page, pageSize: safePageSize });
   },
 };

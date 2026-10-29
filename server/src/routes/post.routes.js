@@ -26,15 +26,32 @@ router.post("/posts", requireAuth, async (req, res, next) => {
 
 router.get("/posts", async (req, res, next) => {
   try {
-    const { page = 1, search } = req.query;
+    const { page = 1, pageSize = 10, search } = req.query;
 
-    const result = search
+    const parsedPage = Number(page);
+	const parsedPageSize = Number(pageSize);
+	
+	if(!Number.isSafeInteger(parsedPage) || parsedPage < 1 ||
+	   !Number.isSafeInteger(parsedPageSize) || parsedPageSize < 1) {
+	  return res.status(400).json({
+		error: {
+		  code: "INVALID_PAGINATION",
+		  message: "page and pageSize must be positive integers.",
+		},
+	  });
+	}
+	
+	const safePageSize = Math.min(parsedPageSize, 100);
+	
+	const result = search
       ? await PostService.search({
           query: search,
-          page: Number(page)
+          page: parsedPage,
+		  pageSize: safePageSize,
         })
       : await PostService.listPublished({
-          page: Number(page)
+          page: parsedPage,
+		  pageSize: safePageSize,
         });
 
     res.status(200).json(result);
