@@ -1,4 +1,4 @@
-// server/src/repositories/post.repository.js - excerpt, updated
+// server/src/repositories/post.repository.js - excerpt, added
 //
 // Verification fix: this section's snippet shapes a findFeed() function
 // that doesn/t exist anywere in this codebase. The real feed-serving
@@ -82,4 +82,13 @@ createWithTags({ authorId, title, body, tagNames, status, publishedAt }) {
 	  hasMore,
 	};
   },
+  
+  findById(id) {
+	return prisma.post.findUnique({ where: { id } });
+  },
+
+  deleteById(id) {
+	return prisma.post.delete({ where: { id } });
+  },
+
 };

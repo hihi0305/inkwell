@@ -1,4 +1,4 @@
-// server/src/services/post.service.js (excerpt, updated)
+// server/src/services/post.service.js (excerpt, added)
 
 import { EventBus } from "../events/event-bus.js"
 import { PostRepository } from "../repositories/post.repository.js";
@@ -43,4 +43,13 @@ export const PostService = {
 	const safePageSize = Math.min(pageSize, MAX_PAGE_SIZE);
     return searchStrategy.search(query, { page, pageSize: safePageSize });
   },
+  
+  async getById(id) {
+	return PostRepository.findById(id);
+  },
+
+  async delete(id) {
+	return PostRepository.deleteById(id);
+  },
+
 };
