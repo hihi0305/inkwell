@@ -13,6 +13,7 @@ on:
     branches: [main]
   # Section 4.1's "event" - this workflow runs automatically whenever
   # code is pushed to main, or a pull request targets main.
+  
 permissions:
   contents: read
       # Section 4.2's "permissions": this workflow only reads the code, so
@@ -36,10 +37,13 @@ jobs:
       
       - name: Build the server Docker image
         run: docker build -t inkwell-server:ci ./server
+        # Section 4.2's "run" - a direct shell command, using the
+        # Dockerfile from Lecture 18 exactly as a developer would
+        # locally, but now executed automatically, on every push.
+
+      - name: Confirm the image was built
+        run: docker image inspect inkwell-server:ci --format 'Build {{.Id}} ({{.Architecture}}, {{.Size}} bytes)'
         # "docker image inspect" exits with an error if the image does not
         # exist, so this step genuinely fails when there is no image.
         # ("docker images" would not: it prints an empty table and still
         # reports success, so a check built on it could never fail.)
-
-      - name: Confirm the image was built
-        run: docker image inspect inkwell-server:ci --format 'Build {{.Id}} ({{.Architecture}}, {{.Size}} bytes)'
