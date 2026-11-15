@@ -12,6 +12,18 @@
 
 import { test, expect, devices } from "@playwright/test";
 
+let sharedEmail;
+
+test.beforeAll(async ({ request }) => {
+  const runId = Date.now();
+  sharedEmail = `e2e-${runId}@example.com`;
+
+  const registerRes = await request.post("http://localhost:4000/api/auth/register", {
+    data: { email: sharedEmail, displayName: "E2E Tester", password: "correcthorse" },
+  });
+  expect(registerRes.ok()).toBe(true);
+});
+
 const viewports = [
   { name: "mobile", viewport: devices["iPhone 13"].viewport },
   { name: "desktop", viewport: { width: 1280, height: 800 } },
@@ -31,13 +43,8 @@ for (const viewport of viewports) {
 	  // Playwright's strict-mode element matching breaks. A per-run
 	  // suffix sidesteps it.
       const runId = Date.now();
-      const email = `e2e-${viewport.name}-${runId}@example.com`;
+      const email = sharedEmail;
       const title = `Hello from ${viewport.name} (${runId})`;
-
-      const registerRes = await request.post("http://localhost:4000/api/auth/register", {
-        data: { email, displayName: "E2E Tester", password: "correcthorse" },
-      });
-      expect(registerRes.ok()).toBe(true);
 
       await page.goto("http://localhost:5173/login");
 	  
