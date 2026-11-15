@@ -83,6 +83,10 @@ jobs:
       - name: Apply database migrations       # part of "build" for a
         working-directory: server             # server with a database
         run: npx prisma migrate deploy
+        
+      - name: Create test environment file
+        working-directory: server
+        run: printf 'DATABASE_URL=%s\n' "$DATABASE_URL" > .env.test
 
       - name: Run tests with coverage         # Section 4.3, step "test"
         working-directory: server             # Lecture 12 unit + Lecture 13 integration
